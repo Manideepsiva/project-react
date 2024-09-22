@@ -3,7 +3,7 @@ import { useLoaderData, Link, Form,useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { setDiaTestName } from '../slices/testnameslice';
-import { setHospName,setHospAdd,setHospTestPrice, removeNotification } from '../slices/booktestslice';
+import { setHospName,setHospAdd,setHospTestPrice, removeNotification,setHospitalId} from '../slices/booktestslice';
 import clientstyle from "../assets/css/style.module.css"
 import Clientnav from './client-navbar'
 import Clienttest from './client-dashboard-test';
@@ -30,12 +30,20 @@ function Clientshowrates() {
 
     useEffect(()=>{
 
-        if(notification){
+        if(notification == 1){
         var x = document.getElementById("toast")
          x.classList.add(appPayStyle['show']);
         setTimeout(function(){ x.classList.remove(appPayStyle['show']) }, 4000);
     dispatch(removeNotification(0));
-}
+  }
+
+  else if(notification == 2){
+    var x = document.getElementById("toast2")
+         x.classList.add(appPayStyle['show']);
+        setTimeout(function(){ x.classList.remove(appPayStyle['show']) }, 4000);
+    dispatch(removeNotification(0));
+
+  }
 
 
     },[]);
@@ -220,6 +228,7 @@ function Clientshowrates() {
         dispatch(setHospName(data[key]["nameOfHospital"]));
         dispatch(setHospAdd(data[key]["address"]));
         dispatch(setHospTestPrice(data[key]["price"]));
+        dispatch(setHospitalId(data[key]["id"]));
        navigate('/authpage/showrates/book')
 
         
@@ -239,6 +248,11 @@ function Clientshowrates() {
             <div className={appPayStyle.toast} id="toast">
   <div className={appPayStyle.img}><i class="fa-solid fa-circle-check"></i></div>
   <div className={appPayStyle.desc}>Successfully Booked</div>
+</div>
+
+<div className={appPayStyle.toast2} id="toast2">
+  <div className={appPayStyle.img2}><i class="fa-solid fa-xmark"></i></div>
+  <div className={appPayStyle.desc2}>Something went wrong</div>
 </div>
 
             <main><article>
@@ -329,7 +343,7 @@ function Clientshowrates() {
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colSpan="3">END OF THIS PAGE TABLE</th>
+                                        <th colSpan="5">END OF THIS PAGE TABLE</th>
                                     </tr>
                                 </tfoot>
                             </table>

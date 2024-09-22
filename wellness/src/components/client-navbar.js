@@ -42,7 +42,7 @@ function Clientnav(){
             </li>
 
             <li className={clientstyle['navbar-item']}>
-              <a href="/contact" className={`${clientstyle['navbar-link']} ${clientstyle['title-md']}`}>Contact</a>
+              <a href="#" className={`${clientstyle['navbar-link']} ${clientstyle['title-md']}`}><Link to={"/logout"}>logout</Link></a>
             </li>
 
            

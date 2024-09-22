@@ -9,6 +9,8 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const testnames = require("./schemas/testschema")
 const hospmodel = require("./schemas/hospitalschema");
+const Appointment = require('./schemas/clientappointmentschema');
+const Transaction = require('./schemas/clientTransaction');
 let typestest;
 
 
@@ -42,7 +44,7 @@ const authroute = (req,res,next)=>{
     const token = authheader && authheader.split(' ')[1];
     if(!token) return res.sendStatus(401);
     jwt.verify(token,SECRET_KEY,(err,user)=>{
-        if(err) res.sendStatus(403);
+        if(err)return  res.sendStatus(403);
         next();
     })
 }
@@ -313,7 +315,7 @@ const hospitals = await hospmodel.find({
     State: state,
     District: district,
     tests: { $elemMatch: { testName: test } } 
-}, {
+}, {_id:1,
     nameOfHospital: 1,
     mitraContactNumber: 1,
     Address: 1,
@@ -323,6 +325,7 @@ const hospitals = await hospmodel.find({
 const resultArray = hospitals.map(hospital => {
     const testInfo = hospital.tests[0]; // Get the first matching test (if any)
     return {
+        id:hospital._id,
         nameOfHospital: hospital.nameOfHospital,
         mitraContactNumber: hospital.mitraContactNumber,
         address: hospital.Address,
@@ -342,6 +345,67 @@ console.log(resultArray)
 
 app.get("/api/protected",authroute,(req,res)=>{
     res.sendStatus(200);
+})
+
+app.post("/api/bookappointment",authroute,async (req,res)=>{
+    console.log("recived bro")
+   
+
+    const {
+        patientName,
+        testname,
+        gender,
+        email,
+        phone,
+        area,
+        city,
+        state,
+        postalCode,
+        appointmentDate,
+        timeSlot,
+        additionalInfo,
+        hospitalid,
+        amount, 
+        paymentMethod
+    } = req.body;
+    const appointmentDateObj = new Date(appointmentDate);
+    console.log(patientName);
+
+    try {
+        const appointment = new Appointment({
+            patientName,
+            testname,
+            gender,
+            email,
+            phone,
+            area,
+            city,
+            state,
+            postalCode,
+            appointmentDate :appointmentDateObj,
+            timeSlot,
+            additionalInfo,
+            hospitalid
+        });
+
+        const savedAppointment = await appointment.save();
+
+        const transaction = new Transaction({
+            amount,
+            paymentMethod,
+            appointmentId: savedAppointment._id
+        });
+        const savedTransaction = await transaction.save();
+        savedAppointment.transaction = savedTransaction._id;
+        await savedAppointment.save();
+
+
+        return res.status(201).json({ success: true, appointment: savedAppointment });
+    } catch (error) {
+        console.error(error);
+       return  res.status(500).json({ success: false, message: 'Failed to book appointment.', error });
+    }
+
 })
 
 app.use((req, res, next) => {

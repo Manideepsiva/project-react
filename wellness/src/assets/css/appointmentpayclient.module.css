@@ -227,6 +227,67 @@
 
 
 
+
+
+
+
+
+.toast2 {
+  visibility: hidden;
+  max-width: 50px;
+  height: 50px;
+  /*margin-left: -125px;*/
+  
+  background-color:#ffffff;
+  color: #000000;
+  text-align: center;
+  border-radius: 1rem;
+
+  
+  position: fixed;
+  z-index: 10;
+  left:0;
+  right: 0;
+  margin-inline: auto;
+  top: 30px;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.toast2 .img2{
+width: 50px;
+height: 50px;
+  
+  float: left;
+  
+ padding-top: 8px;
+  
+  box-sizing: border-box;
+
+  
+  background-color:#ff2c2c;
+  color: #fff;
+}
+.toast2 .desc2{
+
+  font-family: cursive;
+  color: #000000;
+ 
+ text-align: center;
+ padding-top: 8px;
+  
+  overflow: hidden;
+white-space: nowrap;
+}
+
+.toast2.show {
+  visibility: visible;
+  animation: fadein 0.5s, expand 0.5s 0.5s,stay 3s 1s, shrink 0.5s 4s, fadeout 0.5s 4.5s;
+}
+
+
+
+
 @keyframes fadein {
     from {top: 0; opacity: 0;}
     to {top: 30px; opacity: 1;}

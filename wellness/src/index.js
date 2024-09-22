@@ -143,7 +143,7 @@ action : async({request})=>{
     const {isAuthenticated } = await checkauth();
     if(!isAuthenticated) return  redirect("/");
     const token = window.localStorage.getItem('token');
-    console.log(token);
+   
     return "hello";
     
 
@@ -161,12 +161,30 @@ action : async({request})=>{
 },{
 
   path :'/authpage/showrates',
-  element:<Clientshowrates/>
+  element:<Clientshowrates/>,
+  loader:async ()=>{
+    const {isAuthenticated } = await checkauth();
+    if(!isAuthenticated) return  redirect("/");
+    const token = window.localStorage.getItem('token');
+   
+    return "hello";
+    
+
+  }
 },
 
 {
   path : '/authpage/showrates/book',
   element:<Appointmentclient/>,
+  loader:async ()=>{
+    const {isAuthenticated } = await checkauth();
+    if(!isAuthenticated) return  redirect("/");
+    const token = window.localStorage.getItem('token');
+   
+    return "hello";
+    
+
+  },
   action:async({request})=>{
     const formData = await request.formData();
 
@@ -201,12 +219,16 @@ action : async({request})=>{
 
 path:'/authpage/showrates/book/payment',
 element:<Appointmentpayment/>,
-action:({request})=>{
-  store.dispatch(setNotification(1))
- return  redirect("/authpage/showrates");
-
+loader:async ()=>{
+  const {isAuthenticated } = await checkauth();
+  if(!isAuthenticated) return  redirect("/");
+  const token = window.localStorage.getItem('token');
+ 
+  return "hello";
+  
 
 }
+
 
 
 }

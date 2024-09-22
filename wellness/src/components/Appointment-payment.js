@@ -1,18 +1,89 @@
 import React from "react";
 import appPayStyle from "../assets/css/appointmentpayclient.module.css"
 import { Form } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { setNotification } from "../slices/booktestslice";
 
 
 
 function Appointmentpayment(){
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const Testname = useSelector((state) => (state.test.testName));
     const TestPrice = useSelector((state) => (state.appBook.testprice));
     const hospname = useSelector((state) => (state.appBook.nameofhospital));
     const hospadd = useSelector((state) => (state.appBook.hospitaladdress));
+    const patientname = useSelector((state)=>(state.patbook.patientName));      
+    const gendername = useSelector((state)=>(state.patbook.gender));   
+   const emailname = useSelector((state)=>(state.patbook.email));
+   const phonename = useSelector((state)=>(state.patbook.phoneNo));
+   const Areaname = useSelector((state)=>(state.patbook.Area));
+   const cityname = useSelector((state)=>(state.patbook.city));
+   const patstatename = useSelector((state)=>(state.patbook.patstate));
+   const postcodena = useSelector((state)=>(state.patbook.postalcode));
+   const appdatename = useSelector((state)=>(state.patbook.appdate));
+   const slotname = useSelector((state)=>(state.patbook.slot));
+   const additi = useSelector((state)=>(state.patbook.additionalinfo));
+   const hospid = useSelector((state)=>(state.appBook.hospitalid));                    
+
   
+    const handlepayment = async(event)=>{
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const selectedPaymentMethod = formData.get('payment-method'); 
+
+        const Total = TestPrice+10;
+        const appointmentData = {
+            patientName: patientname, 
+            testname: Testname,
+            gender: gendername,
+            email: emailname,
+            phone: phonename,
+            area:Areaname,
+            city: cityname,
+            state: patstatename,
+            postalCode: postcodena,
+            appointmentDate: appdatename, 
+            timeSlot: slotname,
+            additionalInfo:additi,
+            hospitalid:hospid ,
+            amount: Total,
+            paymentMethod: selectedPaymentMethod
+        };
     
+      
+        const token = localStorage.getItem('token');
+    
+        try {
+            const response = await fetch('http://localhost:3001/api/bookappointment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(appointmentData),
+            });
+    
+            if (!response.ok) {
+                
+                dispatch(setNotification(2));
+                return navigate("/authpage/showrates");
+
+            }
+    
+            const result = await response.json();
+            console.log('Appointment successfully booked:', result);
+            dispatch(setNotification(1));
+           return  navigate("/authpage/showrates");
+        } catch (error) {
+            console.error('Error booking appointment:', error);
+            dispatch(setNotification(2));
+            return navigate("/authpage/showrates");
+        }
+
+    }
 
 
 
@@ -25,7 +96,7 @@ function Appointmentpayment(){
         <h1>Checkout</h1>
       </header>
 
-      <Form  className={appPayStyle.form} method="POST">
+      <Form  className={appPayStyle.form} method="POST" onSubmit={handlepayment} id="paymentForm">
         <div>
           <h2>Summary</h2>
 
@@ -48,7 +119,7 @@ function Appointmentpayment(){
                 <i className="fa-brands fa-cc-mastercard"></i>Visa Payment
               </label>
               <div>
-              <input defaultChecked id="visa" name="payment-method" type="radio"/>
+              <input defaultChecked id="visa" name="payment-method" type="radio" value = "Visa"/>
               </div>
             </div>
 
@@ -57,7 +128,7 @@ function Appointmentpayment(){
                 <i className="fa-brands fa-google-pay"></i>PayPal
               </label>
               <div>
-              <input id="paypal" name="payment-method" type="radio" />
+              <input id="paypal" name="payment-method" type="radio" value = "Google-pay" />
               </div>
             </div>
 
@@ -66,7 +137,7 @@ function Appointmentpayment(){
                 <i className="fa-brands fa-cc-visa"></i>Master Card
               </label>
               <div>
-              <input id="mastercard" name="payment-method" type="radio" />
+              <input id="mastercard" name="payment-method" type="radio"  value = "Master-Card" />
               </div>
             </div>
           </div>
@@ -97,7 +168,7 @@ function Appointmentpayment(){
         </div>
 
         <div>
-          <button className={`${appPayStyle.button} ${appPayStyle['button--full']}`} type="submit">
+          <button className={`${appPayStyle.button} ${appPayStyle['button--full']}`}>
             <svg className={appPayStyle.icon}>
               <use xlinkHref="#icon-shopping-bag" />
             </svg>
