@@ -3,7 +3,7 @@ import { useLoaderData, Link, Form,useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { setDiaTestName } from '../slices/testnameslice';
-import { setHospName,setHospAdd,setHospTestPrice } from '../slices/booktestslice';
+import { setHospName,setHospAdd,setHospTestPrice, removeNotification } from '../slices/booktestslice';
 import clientstyle from "../assets/css/style.module.css"
 import Clientnav from './client-navbar'
 import Clienttest from './client-dashboard-test';
@@ -12,11 +12,13 @@ import Clientfooter from './client-footer';
 import herobg from "../assets/images/clientpics/hero-bg.png"
 import maxxy from "../assets/images/clientpics/maxxy.png"
 import Clientstate from './client-dashboard-state';
+import appPayStyle from "../assets/css/appointmentpayclient.module.css"
 
 
 function Clientshowrates() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const notification = useSelector((state)=>(state.appBook.notification))
 
     const [testName, setTestName] = useState('');
     const [suggesions1, setSuggestion1] = useState([]);
@@ -25,6 +27,18 @@ function Clientshowrates() {
     const reduxTestName = useSelector((state) => (state.test.testName));
     const statevalue = useSelector((state) => (state.test.testState));
     const districtvalue = useSelector((state) => (state.test.testLocation));
+
+    useEffect(()=>{
+
+        if(notification){
+        var x = document.getElementById("toast")
+         x.classList.add(appPayStyle['show']);
+        setTimeout(function(){ x.classList.remove(appPayStyle['show']) }, 4000);
+    dispatch(removeNotification(0));
+}
+
+
+    },[]);
 
     useEffect(() => {
         const fetchdata = async () => {
@@ -221,6 +235,11 @@ function Clientshowrates() {
     return (
         <>
             <Clientnav />
+
+            <div className={appPayStyle.toast} id="toast">
+  <div className={appPayStyle.img}><i class="fa-solid fa-circle-check"></i></div>
+  <div className={appPayStyle.desc}>Successfully Booked</div>
+</div>
 
             <main><article>
 

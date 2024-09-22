@@ -14,8 +14,22 @@ import clientstyle from './assets/css/style.module.css'
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store,{persistor} from "./store"
+import {setNotification} from "./slices/booktestslice"
+import { setPatientName,
+  setGender,
+  setEmail,
+  setPhoneNo,
+  setArea,
+  setCity,
+  setPatState,
+  setPostalCode,
+  setAppDate,
+  setSlot,
+  setAdditionalInfo, } from './slices/patientDetailsSlice';
+
 import Clientshowrates from './components/client-showrates';
 import Appointmentclient from './components/Appointment-client';
+import Appointmentpayment from './components/Appointment-payment';
 
 
 
@@ -152,7 +166,49 @@ action : async({request})=>{
 
 {
   path : '/authpage/showrates/book',
-  element:<Appointmentclient/>
+  element:<Appointmentclient/>,
+  action:async({request})=>{
+    const formData = await request.formData();
+
+    const patientName = formData.get('name');
+    const gender = formData.get('gender');
+    const email = formData.get('email');
+    const phoneNo = formData.get('phone');
+    const area = formData.get('area');
+    const city = formData.get('city');
+    const patstate = formData.get('state');
+    const postalcode = formData.get('postalCode');
+    const appdate = formData.get('date');
+    const slot = formData.get('time');
+    const additionalinfo = formData.get('message');
+    store.dispatch(setPatientName(patientName));
+    store.dispatch(setGender(gender));
+    store.dispatch(setEmail(email));
+    store.dispatch(setPhoneNo(phoneNo));
+    store.dispatch(setArea(area))
+    store.dispatch(setCity(city));
+    store.dispatch(setPatState(patstate));
+    store.dispatch(setPostalCode(postalcode));
+    store.dispatch(setAppDate(appdate));
+    store.dispatch(setSlot(slot));
+    store.dispatch(setAdditionalInfo(additionalinfo));
+    return redirect('/authpage/showrates/book/payment');
+    ;
+
+
+  }
+},{
+
+path:'/authpage/showrates/book/payment',
+element:<Appointmentpayment/>,
+action:({request})=>{
+  store.dispatch(setNotification(1))
+ return  redirect("/authpage/showrates");
+
+
+}
+
+
 }
 
 ])

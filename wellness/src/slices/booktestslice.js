@@ -6,6 +6,7 @@ export const booknameslice = createSlice({
         nameofhospital : "",
         hospitaladdress:"",
         testprice:"",
+        notification:""
     },
 
     reducers:{
@@ -24,10 +25,16 @@ export const booknameslice = createSlice({
             console.log('Setting hosp price:', action.payload);
             state.testprice = action.payload;
 
+        },
+        setNotification:(state,action)=>{
+            state.notification = action.payload;
+        },
+        removeNotification:(state,action)=>{
+            state.notification = "";
         }
     }
 })
 
 
-export const {setHospName,setHospAdd,setHospTestPrice} = booknameslice.actions;
+export const {setHospName,setHospAdd,setHospTestPrice,setNotification,removeNotification} = booknameslice.actions;
 export default booknameslice.reducer;

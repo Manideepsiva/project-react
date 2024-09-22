@@ -1,6 +1,30 @@
 import React from "react";
+import { useEffect,useState } from "react";
+import { Form } from "react-router-dom";
 import appstyle from "../assets/css/appointmentclient.module.css"
+
 function Appointmentclient(){
+
+
+    const [minDate, setMinDate] = useState('');
+    const [maxDate, setMaxDate] = useState('');
+  
+    useEffect(() => {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+  
+      const oneMonthLater = new Date(tomorrow);
+      oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+  
+     
+      const formatDate = (date) => {
+        return date.toISOString().split('T')[0];
+      };
+  
+      setMinDate(formatDate(tomorrow)); 
+      setMaxDate(formatDate(oneMonthLater)); 
+    }, []);
 
 
     return(
@@ -10,7 +34,7 @@ function Appointmentclient(){
 <div className={appstyle['wrap-app']}>
       <div className={appstyle.container}>
         <h1>ENTER YOUR DETAILS</h1>
-        <form id="appointmentForm" action="/dashboard/appointment" method="post">
+        <Form id="appointmentForm"  method="post">
           <label htmlFor="name">Patient Name:</label>
           <input type="text" id="name" name="name" placeholder="Enter Patient Name" required />
 
@@ -37,7 +61,7 @@ function Appointmentclient(){
 
           <label htmlFor="date">Appointment Date and Time:</label>
           <div className={appstyle['time-slots']}>
-            <input type="date" id="date" name="date" min="2023-03-24" required />
+            <input type="date" id="date" name="date" min={minDate} max={maxDate} required />
             <select id="time" name="time" required>
               <option value="9-10 AM">9-10 AM</option>
               <option value="10-11 AM">10-11 AM</option>
@@ -57,7 +81,7 @@ function Appointmentclient(){
           <textarea id="message" name="message" placeholder="Enter Additional Information"></textarea>
 
           <input type="submit" value="Book Appointment" style={{textAlign:"center"}} />
-        </form>
+        </Form>
       </div>
     </div>
         
